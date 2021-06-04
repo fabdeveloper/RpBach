@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="ProductRecoverer" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+
+	<properties>
+	</properties>
+	
+	<step id="mychunk">
+	
+		<chunk>
+			<reader ref=""></reader>
+			<processor ref=""></processor>
+			<writer ref=""></writer>
+		</chunk>
+	
+	</step>
+	
+	<step id="mytask">
+	
+		<batchlet ref=""></batchlet>
+		<end on="COMPLETED"/>
+	
+	</step>
+
+</job>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+
+  
+	  <persistence-unit name="RS3_PU" transaction-type="JTA">
+    	<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+<!--         <jta-data-source>SuperDS</jta-data-source> -->
+        <jta-data-source>jdbc/MySQLConnDS</jta-data-source>
+
+    			<class>src.entity.User</class>
+        		<class>src.entity.Grupo</class>
+                <class>src.entity.Order</class>
+                <class>src.entity.PurchaseStatus</class>
+                <class>src.entity.DeliveryDetails</class>
+                <class>src.entity.Cart</class>
+                <class>src.entity.CartItem</class>
+                <class>src.entity.Product</class>
+                <class>src.entity.Articulo</class>
+                <class>src.entity.Oferta</class>
+                <class>src.entity.Atributo</class>  
+    
+<!--         <exclude-unlisted-classes>false</exclude-unlisted-classes> -->
+    
+
+    <properties> 
+<!--           <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>       -->
+    
+      <property name="javax.persistence.schema-generation.database.action" value="create-or-extend-tables"/>      
+    
+
+      
+      <!-- 
+          <exclude-unlisted-classes>false</exclude-unlisted-classes>
+      
+          <jta-data-source>jdbc/RS3_MySql_DS</jta-data-source>
+          
+              <jta-data-source>jdbc/myDS</jta-data-source>
+          
+                    <jta-data-source>SuperDS</jta-data-source>
+      
+      
+            <property name="javax.persistence.jdbc.user" value="Fab"/>
+      <property name="javax.persistence.jdbc.password" value="nomelase"/>
+      
+      
+                <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/RS3DB;create=true"/>
+       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      
+      <property name="javax.persistence.jdbc.user" value=""/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+      
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>     
+      
+        -->
+      
+      
+      
+    </properties>
+  </persistence-unit>
+  
+
+
+</persistence>
