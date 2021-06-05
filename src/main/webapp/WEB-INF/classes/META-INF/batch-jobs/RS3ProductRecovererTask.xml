@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job id="RS3ProductRecovererTask" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
-
-
-	
+	 <listeners>
+ 		<listener ref="RS3ProductRecovererTaskListener"/>
+ 	</listeners>
+ 	
 	<step id="mytask">	
 		<batchlet ref="ProductRecovererTask"></batchlet>
 		<end on="COMPLETED"/>	
+	
 	</step>
+
 
 </job>

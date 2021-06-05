@@ -4,13 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import javax.batch.api.Batchlet;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import src.entity.CartItem;
 import src.entity.Order;
 import src.inter.IServiceLocator;
 import src.manager.IStockManager;
 
+
+@Named
+@RequestScoped
 public class ProductRecovererTask implements Batchlet {
 	
 	@Inject
@@ -18,6 +23,10 @@ public class ProductRecovererTask implements Batchlet {
 
 	@Inject 
 	IStockManager stockManager;
+	
+	
+	
+	
 	@Override
 	public String process() throws Exception {
 		String status = "COMPLETED";

@@ -5,6 +5,25 @@
 	 version="3.0">
 	 
 	 
+	 <servlet>
+		 <servlet-name>Faces Servlet</servlet-name>
+		 <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>	 
+		 <load-on-startup>1</load-on-startup>    
+	 </servlet>
+	 
+	 
+	 <servlet-mapping>	 
+		 <servlet-name>Faces Servlet</servlet-name>
+		 <url-pattern>*.xhtml</url-pattern>
+	 </servlet-mapping>
+	 
+	 
+	 <welcome-file-list>
+	 <welcome-file>RS3ProductRecovererBatchJobStarter.xhtml</welcome-file>
+	 
+	 </welcome-file-list>
+	 
+	 
 	 
 	 
 </web-app>
