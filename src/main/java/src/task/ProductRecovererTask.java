@@ -1,22 +1,55 @@
 package src.task;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.batch.api.Batchlet;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 
 import src.entity.CartItem;
 import src.entity.Order;
 import src.inter.IServiceLocator;
 import src.manager.IStockManager;
 
-
-@Named
-@RequestScoped
+@Dependent
+@Named("ProductRecovererTask")
 public class ProductRecovererTask implements Batchlet {
+	
+	static Logger logger = Logger.getLogger(ProductRecovererTask.class.getName());
+	
+	static {
+		Handler consoleHandler = new ConsoleHandler();
+		Handler fileHandler = null;
+		try {
+			fileHandler = new FileHandler("ProductRecovererTask.log", true);
+		} catch (SecurityException | IOException e) {
+			logger.log(Level.SEVERE, "ProductRecovererTask - error creando logger filehandler");
+			e.printStackTrace();
+		}
+		if(consoleHandler != null){
+			consoleHandler.setLevel(Level.ALL);
+			logger.addHandler(consoleHandler);
+		}
+		if(fileHandler != null){
+			SimpleFormatter sf = new SimpleFormatter();
+			fileHandler.setFormatter(sf);
+			fileHandler.setLevel(Level.ALL);
+			logger.addHandler(fileHandler);
+		}
+		logger.log(Level.INFO, "ProductRecovererTask - logger inicializado");
+		
+	}
 	
 	@Inject
 	IServiceLocator serviceLocator;
@@ -26,16 +59,17 @@ public class ProductRecovererTask implements Batchlet {
 	
 	
 	
-	
+	@Transactional
 	@Override
 	public String process() throws Exception {
 		String status = "COMPLETED";
 		
 		// obtener todas las ordenes pre-confirmadas - allPreConfirmedOrders
-		Date limitDate = new Date(new Date().getTime() - (1000 * 60 * 60 * 24));
-		String sLimitDate = limitDate.toString();
-		List<Order> listaOrdenes = getServiceLocator().getOrderServices().createNamedQueryListResult("allPreConfirmedOrdersUntil", "limit_date", sLimitDate);
-						
+		Date limitDate = new Date(new Date().getTime() - (1000 * 60 * 60 * 2));
+		List<Order> listaOrdenes = getServiceLocator().getOrderServices().createNamedQueryListResultDateParam("allPreConfirmedOrdersUntil", "limit_date", limitDate);
+		String msg = "Numero de ordenes encontradas = " + listaOrdenes.size();		
+		logger.log(Level.ALL, msg);
+		
 		// por cada orden
 		for(Order order : listaOrdenes) {			
 			// por cada item del carrito
