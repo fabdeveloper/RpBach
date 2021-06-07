@@ -62,13 +62,34 @@ public class ProductRecovererTask implements Batchlet {
 	@Transactional
 	@Override
 	public String process() throws Exception {
+		String msgStart = "ProductRecovererTask.process() ...";
+		System.out.println(msgStart);
+		logger.log(Level.ALL, msgStart);
+
 		String status = "COMPLETED";
 		
 		// obtener todas las ordenes pre-confirmadas - allPreConfirmedOrders
 		Date limitDate = new Date(new Date().getTime() - (1000 * 60 * 60 * 2));
-		List<Order> listaOrdenes = getServiceLocator().getOrderServices().createNamedQueryListResultDateParam("allPreConfirmedOrdersUntil", "limit_date", limitDate);
-		String msg = "Numero de ordenes encontradas = " + listaOrdenes.size();		
-		logger.log(Level.ALL, msg);
+		logger.log(Level.ALL, "Recuperando orders con fecha límite = " + limitDate);
+		System.out.println("Recuperando orders con fecha límite = " + limitDate);
+
+		List<Order> listaOrdenes = null;
+		try {			
+
+			listaOrdenes = getServiceLocator().getOrderServices().createNamedQueryListResultDateParam("allPreConfirmedOrdersUntil", "limit_date", limitDate);
+			String msg = "Numero de ordenes encontradas = " + listaOrdenes.size();		
+			logger.log(Level.ALL, msg);
+			System.out.println(msg);
+
+		
+		}catch(Throwable t) {
+			String algunerror = "Ocurrido algún error buscando ordenes - mensaje = " + t.getMessage();
+			logger.log(Level.ALL, algunerror);
+			System.out.println(algunerror);
+
+		}
+		
+
 		
 		// por cada orden
 		for(Order order : listaOrdenes) {			
@@ -87,7 +108,7 @@ public class ProductRecovererTask implements Batchlet {
 	private void cancelOrder(Order order) {
 		
 		Date now = new Date();
-		order.getPurchaseStatus().setRemark("CANCELED");
+		order.getPurchaseStatus().setRemark("CANCELLED");
 		order.getPurchaseStatus().setLastModification(now);
 		order.setLastModificationDate(now);
 		
@@ -96,7 +117,7 @@ public class ProductRecovererTask implements Batchlet {
 
 	@Override
 	public void stop() throws Exception {
-		// TODO Auto-generated method stub
+		logger.log(Level.ALL, "ProductRecovererTaks.stop() - task stopped");
 
 	}
 
@@ -114,6 +135,14 @@ public class ProductRecovererTask implements Batchlet {
 
 	public void setStockManager(IStockManager stockManager) {
 		this.stockManager = stockManager;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static void setLogger(Logger logger) {
+		ProductRecovererTask.logger = logger;
 	}
 
 }
