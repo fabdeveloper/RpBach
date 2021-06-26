@@ -26,7 +26,7 @@ public class RpBatchTimer {
 	
 	@PostConstruct
 	public void initTimer() {
-		timerService.createTimer(60000, 60000, null);
+		timerService.createTimer(0, 600000, null);
 	}
 	
 	

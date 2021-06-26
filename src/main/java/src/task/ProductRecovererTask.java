@@ -12,13 +12,14 @@ import java.util.logging.SimpleFormatter;
 
 import javax.batch.api.Batchlet;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
 import src.entity.CartItem;
 import src.entity.Order;
+import src.entity.PurchaseStatus;
+import src.entity.PurchaseStatusType;
 import src.inter.IServiceLocator;
 import src.manager.IStockManager;
 
@@ -58,43 +59,45 @@ public class ProductRecovererTask implements Batchlet {
 	IStockManager stockManager;
 	
 	
+	private void publish(String msg) {
+		System.out.println(msg);
+		logger.log(Level.ALL, msg);
+	}
 	
 	@Transactional
 	@Override
 	public String process() throws Exception {
 		String msgStart = "ProductRecovererTask.process() ...";
-		System.out.println(msgStart);
-		logger.log(Level.ALL, msgStart);
+		publish(msgStart);
+
 
 		String status = "COMPLETED";
 		
 		// obtener todas las ordenes pre-confirmadas - allPreConfirmedOrders
 		Date limitDate = new Date(new Date().getTime() - (1000 * 60 * 60 * 2));
-		logger.log(Level.ALL, "Recuperando orders con fecha límite = " + limitDate);
-		System.out.println("Recuperando orders con fecha límite = " + limitDate);
+		String msgLimitDate = "Recuperando orders con fecha límite = " + limitDate;
+		publish(msgLimitDate);
 
 		List<Order> listaOrdenes = null;
-		try {			
-
+		try {	
 			listaOrdenes = getServiceLocator().getOrderServices().createNamedQueryListResultDateParam("allPreConfirmedOrdersUntil", "limit_date", limitDate);
-			String msg = "Numero de ordenes encontradas = " + listaOrdenes.size();		
-			logger.log(Level.ALL, msg);
-			System.out.println(msg);
-
+			String msg = "Numero de ordenes encontradas = " + listaOrdenes.size();	
+			publish(msg);
 		
 		}catch(Throwable t) {
 			String algunerror = "Ocurrido algún error buscando ordenes - mensaje = " + t.getMessage();
-			logger.log(Level.ALL, algunerror);
-			System.out.println(algunerror);
-
-		}
-		
-
-		
+			publish(algunerror);
+		}		
 		// por cada orden
 		for(Order order : listaOrdenes) {			
 			// por cada item del carrito
-			for(CartItem item : order.getCart().getListaItems()) {
+			List<CartItem> listaItems = order.getCart().getListaItems();
+			String msgListaItems = "procesando orderId= " + order.getId() + ", con num items = " + listaItems.size();
+			publish(msgListaItems);
+			
+			for(CartItem item : listaItems) {
+				String msgItem = "recuperando : itemId= " + item.getOferta().getId() + ", unidades= " + item.getCounter();
+				publish(msgItem);
 				// recupera el stock reservado
 				getStockManager().recuperarStock(item.getOferta().getId(), item.getCounter());
 			}
@@ -108,7 +111,10 @@ public class ProductRecovererTask implements Batchlet {
 	private void cancelOrder(Order order) {
 		
 		Date now = new Date();
-		order.getPurchaseStatus().setRemark("CANCELLED");
+//		order.getPurchaseStatus().setRemark("CANCELADO");
+		PurchaseStatus ps = order.getPurchaseStatus();
+		ps.setStatus(PurchaseStatusType.CANCELADO);
+		order.getPurchaseStatus().setStatus(PurchaseStatusType.CANCELADO);
 		order.getPurchaseStatus().setLastModification(now);
 		order.setLastModificationDate(now);
 		
