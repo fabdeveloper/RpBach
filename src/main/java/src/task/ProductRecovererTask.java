@@ -118,7 +118,7 @@ public class ProductRecovererTask implements Batchlet {
 		order.getPurchaseStatus().setLastModification(now);
 		order.setLastModificationDate(now);
 		
-		getServiceLocator().getOrderServices().update(order);		
+		getServiceLocator().getOrderServices().merge(order);		
 	}
 
 	@Override
