@@ -10,9 +10,10 @@
         <jta-data-source>jdbc/MySQLConnDS</jta-data-source>
 
                 <class>src.entity.Atributo</class>  
-                <class>src.entity.Etiqueta</class>          
-            	<class>src.entity.User</class>
+                <class>src.entity.Etiqueta</class>      
+            	<class>src.entity.UserProfile</class>            	
         		<class>src.entity.Grupo</class>
+        		<class>src.entity.User</class>
                 <class>src.entity.PurchaseStatus</class>
                 <class>src.entity.DeliveryDetails</class>
                 <class>src.entity.Cart</class>
@@ -21,8 +22,6 @@
                 <class>src.entity.Articulo</class>
                 <class>src.entity.Oferta</class>
                 <class>src.entity.Order</class>
-                
-
     
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
     
